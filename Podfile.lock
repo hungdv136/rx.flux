@@ -1,0 +1,95 @@
+PODS:
+  - CocoaLumberjack (3.2.0):
+    - CocoaLumberjack/Default (= 3.2.0)
+    - CocoaLumberjack/Extensions (= 3.2.0)
+  - CocoaLumberjack/Default (3.2.0)
+  - CocoaLumberjack/Extensions (3.2.0):
+    - CocoaLumberjack/Default
+  - PureLayout (3.0.2)
+  - RxCocoa (3.5.0):
+    - RxSwift (~> 3.4)
+  - RxSwift (3.5.0)
+  - Swinject (2.1.0)
+  - SwinjectStoryboard (1.1.1):
+    - Swinject (~> 2.0)
+  - YapDatabase (3.0):
+    - YapDatabase/Standard (= 3.0)
+  - YapDatabase/Standard (3.0):
+    - YapDatabase/Standard/Core (= 3.0)
+    - YapDatabase/Standard/Extensions (= 3.0)
+  - YapDatabase/Standard/Core (3.0):
+    - CocoaLumberjack
+  - YapDatabase/Standard/Extensions (3.0):
+    - YapDatabase/Standard/Core
+    - YapDatabase/Standard/Extensions/ActionManager (= 3.0)
+    - YapDatabase/Standard/Extensions/AutoView (= 3.0)
+    - YapDatabase/Standard/Extensions/CloudCore (= 3.0)
+    - YapDatabase/Standard/Extensions/CloudKit (= 3.0)
+    - YapDatabase/Standard/Extensions/ConnectionProxy (= 3.0)
+    - YapDatabase/Standard/Extensions/CrossProcessNotification (= 3.0)
+    - YapDatabase/Standard/Extensions/FilteredView (= 3.0)
+    - YapDatabase/Standard/Extensions/FullTextSearch (= 3.0)
+    - YapDatabase/Standard/Extensions/Hooks (= 3.0)
+    - YapDatabase/Standard/Extensions/ManualView (= 3.0)
+    - YapDatabase/Standard/Extensions/Relationships (= 3.0)
+    - YapDatabase/Standard/Extensions/RTreeIndex (= 3.0)
+    - YapDatabase/Standard/Extensions/SearchResultsView (= 3.0)
+    - YapDatabase/Standard/Extensions/SecondaryIndex (= 3.0)
+    - YapDatabase/Standard/Extensions/View (= 3.0)
+  - YapDatabase/Standard/Extensions/ActionManager (3.0):
+    - YapDatabase/Standard/Core
+    - YapDatabase/Standard/Extensions/AutoView
+  - YapDatabase/Standard/Extensions/AutoView (3.0):
+    - YapDatabase/Standard/Core
+    - YapDatabase/Standard/Extensions/View
+  - YapDatabase/Standard/Extensions/CloudCore (3.0):
+    - YapDatabase/Standard/Core
+  - YapDatabase/Standard/Extensions/CloudKit (3.0):
+    - YapDatabase/Standard/Core
+  - YapDatabase/Standard/Extensions/ConnectionProxy (3.0):
+    - YapDatabase/Standard/Core
+  - YapDatabase/Standard/Extensions/CrossProcessNotification (3.0):
+    - YapDatabase/Standard/Core
+  - YapDatabase/Standard/Extensions/FilteredView (3.0):
+    - YapDatabase/Standard/Core
+    - YapDatabase/Standard/Extensions/View
+  - YapDatabase/Standard/Extensions/FullTextSearch (3.0):
+    - YapDatabase/Standard/Core
+  - YapDatabase/Standard/Extensions/Hooks (3.0):
+    - YapDatabase/Standard/Core
+  - YapDatabase/Standard/Extensions/ManualView (3.0):
+    - YapDatabase/Standard/Core
+    - YapDatabase/Standard/Extensions/View
+  - YapDatabase/Standard/Extensions/Relationships (3.0):
+    - YapDatabase/Standard/Core
+  - YapDatabase/Standard/Extensions/RTreeIndex (3.0):
+    - YapDatabase/Standard/Core
+  - YapDatabase/Standard/Extensions/SearchResultsView (3.0):
+    - YapDatabase/Standard/Core
+    - YapDatabase/Standard/Extensions/AutoView
+    - YapDatabase/Standard/Extensions/FullTextSearch
+  - YapDatabase/Standard/Extensions/SecondaryIndex (3.0):
+    - YapDatabase/Standard/Core
+  - YapDatabase/Standard/Extensions/View (3.0):
+    - YapDatabase/Standard/Core
+
+DEPENDENCIES:
+  - PureLayout
+  - RxCocoa (~> 3.5.0)
+  - RxSwift (~> 3.5.0)
+  - Swinject
+  - SwinjectStoryboard
+  - YapDatabase
+
+SPEC CHECKSUMS:
+  CocoaLumberjack: 9b4aed7073d242f29cc2f62068d995faf67f703a
+  PureLayout: 4d550abe49a94f24c2808b9b95db9131685fe4cd
+  RxCocoa: a0a09f45d0e5b48ecb6a4a7b4b4c89c88d3f633f
+  RxSwift: 18ee9d78b45edb3b0b7e79916b47a116e6dbc842
+  Swinject: 85e468ac75c5c2d234076f98c591d57d56bc64bc
+  SwinjectStoryboard: 4c71c25f312322844d39ee06f0f523db7b9b10a3
+  YapDatabase: 0cef6c79948169c924ae325d430ffcfa8a5231c2
+
+PODFILE CHECKSUM: fa65b3437aa8186a85da105d1687cbf371d31bf8
+
+COCOAPODS: 1.2.1
