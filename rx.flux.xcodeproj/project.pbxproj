@@ -13,8 +13,8 @@
 		7CAB9F421F05E6DA00B31FAC /* IncreaseAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CAB9F401F05E6DA00B31FAC /* IncreaseAction.swift */; };
 		7CAB9F431F05E6DA00B31FAC /* CounterStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CAB9F411F05E6DA00B31FAC /* CounterStore.swift */; };
 		7CAB9F451F05E6EB00B31FAC /* DI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CAB9F441F05E6EB00B31FAC /* DI.swift */; };
+		7CAB9F481F05F7A400B31FAC /* CounterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CAB9F471F05F7A400B31FAC /* CounterViewController.swift */; };
 		7CEFE5DD1F00BF5F005AAEC7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CEFE5DC1F00BF5F005AAEC7 /* AppDelegate.swift */; };
-		7CEFE5DF1F00BF5F005AAEC7 /* CounterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CEFE5DE1F00BF5F005AAEC7 /* CounterViewController.swift */; };
 		7CEFE5E71F00BF5F005AAEC7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7CEFE5E51F00BF5F005AAEC7 /* LaunchScreen.storyboard */; };
 		7CEFE6311F00FA5A005AAEC7 /* DbConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CEFE6291F00FA5A005AAEC7 /* DbConnection.swift */; };
 		7CEFE6321F00FA5A005AAEC7 /* DbConnection+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CEFE62A1F00FA5A005AAEC7 /* DbConnection+Rx.swift */; };
@@ -42,9 +42,9 @@
 		7CAB9F401F05E6DA00B31FAC /* IncreaseAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = IncreaseAction.swift; path = CounterExample/IncreaseAction.swift; sourceTree = "<group>"; };
 		7CAB9F411F05E6DA00B31FAC /* CounterStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CounterStore.swift; path = CounterExample/CounterStore.swift; sourceTree = "<group>"; };
 		7CAB9F441F05E6EB00B31FAC /* DI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DI.swift; path = Configurations/DI.swift; sourceTree = "<group>"; };
+		7CAB9F471F05F7A400B31FAC /* CounterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CounterViewController.swift; path = CounterExample/CounterViewController.swift; sourceTree = "<group>"; };
 		7CEFE5D91F00BF5F005AAEC7 /* rx.flux.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = rx.flux.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7CEFE5DC1F00BF5F005AAEC7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		7CEFE5DE1F00BF5F005AAEC7 /* CounterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterViewController.swift; sourceTree = "<group>"; };
 		7CEFE5E61F00BF5F005AAEC7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7CEFE5E81F00BF5F005AAEC7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7CEFE6291F00FA5A005AAEC7 /* DbConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DbConnection.swift; path = DbPersistence/DbConnection.swift; sourceTree = "<group>"; };
@@ -89,7 +89,7 @@
 		7CAB9F361F05E06000B31FAC /* CounterExample */ = {
 			isa = PBXGroup;
 			children = (
-				7CEFE5DE1F00BF5F005AAEC7 /* CounterViewController.swift */,
+				7CAB9F471F05F7A400B31FAC /* CounterViewController.swift */,
 				7CAB9F401F05E6DA00B31FAC /* IncreaseAction.swift */,
 				7CAB9F411F05E6DA00B31FAC /* CounterStore.swift */,
 			);
@@ -307,8 +307,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7CEFE5DF1F00BF5F005AAEC7 /* CounterViewController.swift in Sources */,
 				7CEFE6321F00FA5A005AAEC7 /* DbConnection+Rx.swift in Sources */,
+				7CAB9F481F05F7A400B31FAC /* CounterViewController.swift in Sources */,
 				7CEFE6351F00FA5A005AAEC7 /* DbDispatcherPersistence.swift in Sources */,
 				7CEFE6461F00FA68005AAEC7 /* Store.swift in Sources */,
 				7CEFE6441F00FA68005AAEC7 /* Persistence.swift in Sources */,
