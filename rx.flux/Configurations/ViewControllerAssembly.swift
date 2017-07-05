@@ -12,9 +12,8 @@ import RxSwift
 final class ViewControllerAssembly: Assembly {
     func assemble(container: Container) {
         container.register(CounterViewController.self) { r in
-            let dispatcher = r.resolve(Dispatcher.self)!
             let counterStore = r.resolve(CounterStore.self)!
-            return CounterViewController(dispatcher: dispatcher, counterStore: counterStore)
+            return CounterViewController(counterStore: counterStore)
         }
     }
 }

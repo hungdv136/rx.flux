@@ -8,29 +8,29 @@
 
 import RxSwift
 
-private let collection = "store"
-
-final class DbStorePersistence<S: Codable>: StorePersistence {
-    init(db: Database) {
+final class DbPersistence<S: Codable>: Persistence {
+    init(db: Database, collectionName: String) {
         self.db = db
+        self.collectionName = collectionName
     }
     
-    func saveState(_ state: S) -> Observable<Void> {
+    func save(_ state: S) -> Observable<Void> {
         return db.connection.rx.write { tx in
             let key = String(reflecting: S.self)
-            tx.save(state.archivedData, forKey: key, inCollection: collection)
+            tx.save(state.archivedData, forKey: key, inCollection: self.collectionName)
         }
     }
     
-    func loadState() -> Observable<S?> {
+    func load() -> Observable<S?> {
         return db.connection.rx.read { tx in
             let key = String(reflecting: S.self)
-            let data = tx.objectWithKey(key, inCollection: collection) as? Data
+            let data = tx.objectWithKey(key, inCollection: self.collectionName) as? Data
             return data.flatMap { NSKeyedUnarchiver.unarchiveCodableObject(with: $0) }
         }
     }
     
-    //MARK: Properties
+    // MARK: Properties
     
+    private let collectionName: String
     private let db: Database
 }

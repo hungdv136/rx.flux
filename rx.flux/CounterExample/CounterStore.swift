@@ -9,11 +9,21 @@
 import Foundation
 
 final class CounterStore: Store<CountState> {
-    init() {
-        super.init(initialState: CountState())
+    init(persistence: DbPersistence<State>) {
+        super.init(initialState: CountState(), persistence: persistence)
     }
 }
 
 struct CountState {
     var currentValue: Int = 0
+}
+
+extension CountState: Codable {
+    init?(coder: Coder) {
+        currentValue = coder.decodeInteger(forKey: "currentValue")
+    }
+    
+    func encode(with coder: Coder) {
+        coder.encode(currentValue, forKey: "currentValue")
+    }
 }
