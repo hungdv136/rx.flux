@@ -12,8 +12,7 @@ import RxCocoa
 import PureLayout
 
 final class CounterViewController: UIViewController {
-    init(dispatcher: Dispatcher, counterStore: CounterStore) {
-        self.dispatcher = dispatcher
+    init(counterStore: CounterStore) {
         self.counterStore = counterStore
         super.init(nibName: nil, bundle: nil)
     }
@@ -34,20 +33,41 @@ final class CounterViewController: UIViewController {
         let plus = plusButton.rx.tap.map { 1 }
     
         Observable.merge(minus, plus)
-            .action(IncreaseAction.init)
-            .dispatch(dispatcher: dispatcher)
+            .flatMap { IncreaseAction(additionValue: $0).dispatch() }
             .subscribe()
             .disposed(by: disposeBag)
         
         counterStore.state
             .map { "\($0.currentValue)" }
+            .do(onNext: {
+                print("state: \($0)")
+            })
             .drive(textField.rx.text)
             .disposed(by: disposeBag)
         
-//        Observable.merge(minus, plus)
-//            .map { String(format: "%d", $0 + (Int(textField.text ?? "0") ?? 0)) }
-//            .bind(to: textField.rx.text)
-//            .disposed(by: disposeBag)
+        let queue: DispatchQueue = DispatchQueue(label: "testing-con", qos: .userInitiated, attributes: .concurrent)
+        let queue2: DispatchQueue = DispatchQueue(label: "testing-con2", qos: .userInitiated, attributes: .concurrent)
+        
+        for i in 1...30 {
+            test(queue: queue, i: i)
+        }
+        
+        for i in 1...30 {
+            test(queue: queue2, i: -i)
+        }
+    }
+    
+    func test(queue: DispatchQueue, i: Int) {
+        queue.async {
+            //sleep(UInt32(i))
+            IncreaseAction(additionValue: i)
+                .dispatch()
+                .do(onNext: { event in
+                    print("\(i) - \(event)")
+                })
+                .subscribe()
+                .disposed(by: self.disposeBag)
+        }
     }
     
     // MARK: Properties
@@ -65,7 +85,8 @@ final class CounterViewController: UIViewController {
         let button = UIButton()
         button.setTitle("-", for: .normal)
         button.setTitleColor(UIColor.red, for: .normal)
-        button.backgroundColor = UIColor.lightGray
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.lightGray.cgColor
         return button
     }()
     
@@ -73,7 +94,8 @@ final class CounterViewController: UIViewController {
         let button = UIButton()
         button.setTitle("+", for: .normal)
         button.setTitleColor(UIColor.red, for: .normal)
-        button.backgroundColor = UIColor.lightGray
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.lightGray.cgColor
         return button
     }()
     
@@ -86,7 +108,6 @@ final class CounterViewController: UIViewController {
     }()
     
     private let disposeBag = DisposeBag()
-    private let dispatcher: Dispatcher
     private let counterStore: CounterStore
 }
 

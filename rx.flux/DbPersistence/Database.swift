@@ -9,12 +9,11 @@
 import YapDatabase
 
 final class Database {
-    init(userId: String) {
-        path = Database.path(forUserId: userId)
+    init(databaseName: String) {
+        path = Database.createPath(for: databaseName)
         db = YapDatabase(path: path)
         db.defaultObjectPolicy = .share
         db.defaultMetadataCacheEnabled = false
-        
         connection = db.newConnection()
     }
     
@@ -23,12 +22,11 @@ final class Database {
     private let path: String
     let connection: DbConnection
     private let db: YapDatabase
-    
-    static func databaseExisting(forUserId userId: String) -> Bool {
-        return FileManager.default.fileExists(atPath: path(forUserId: userId))
-    }
-    
-    func delete() {
+}
+
+extension Database {
+    static func delete(databaseName: String) {
+        let path = createPath(for: databaseName)
         do {
             try FileManager.default.removeItem(atPath: path)
             if let path = ((path as NSString).deletingPathExtension as NSString).appendingPathExtension("sqlite-shm") {
@@ -41,9 +39,11 @@ final class Database {
         catch { }
     }
     
-    private static func path(forUserId userId: String) -> String {
-        let paths = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)
-        let folderPath = paths.first ?? NSTemporaryDirectory()
-        return (folderPath as NSString).appendingPathComponent("rx.flux-\(userId).sqlite")
+    static func exists(databaseName: String) -> Bool {
+        return FileManager.default.fileExists(atPath: createPath(for: databaseName))
+    }
+    
+    fileprivate static func createPath(for databaseName: String) -> String {
+        return "\(databaseName).sqlite"
     }
 }

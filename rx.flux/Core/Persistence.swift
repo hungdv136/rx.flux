@@ -8,17 +8,9 @@
 
 import RxSwift
 
-protocol StorePersistence {
+public protocol Persistence {
     associatedtype State
     
-    func saveState(_ state: State) -> Observable<Void>
-    func loadState() -> Observable<State?>
-}
-
-protocol DispatcherPersistence {
-    func loadActions() -> [(id: String, data: Data)]?
-    func insertAction(data: Data, id: String)
-    func updateAction(data: Data, id: String)
-    func deleteAction(forId id: String)
-    func deleteActions(forIds ids: [String])
+    func save(_ state: State) -> Observable<Void>
+    func load() -> Observable<State?>
 }
