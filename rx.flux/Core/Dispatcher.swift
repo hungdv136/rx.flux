@@ -11,12 +11,14 @@ import RxCocoa
 import Foundation
 
 public final class Dispatcher<S> {
-    init(rulesCreator: () -> [DispatchRule]) {
-        dispatchRules = rulesCreator()
+    init(store: Store<S>) {
+        dispatchRules = store.createRules()
+        self.store = store
     }
     
-    fileprivate let dispatchRules: [DispatchRule]
+    fileprivate let dispatchRules: [Rule]
     fileprivate let disposeBag = DisposeBag()
+    fileprivate weak var store: Store<S>?
     fileprivate var isExecuting = false
     fileprivate lazy var waitingItems: [ExecutingAction] = []
     fileprivate lazy var executingItems: Set<ExecutingAction> = Set<ExecutingAction>()
@@ -41,7 +43,9 @@ extension Dispatcher {
         queue.async {
             self.dispatchRules.forEach { $0.execute(dispatchingAction: action, actions: self.waitingItems) }
             self.waitingItems.append(action)
-            self.execute()
+            self.store?.ready.subscribe(onNext: { [weak self] in
+                self?.execute()
+            }).disposed(by: self.disposeBag)
         }
     }
 }

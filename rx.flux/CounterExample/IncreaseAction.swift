@@ -6,21 +6,23 @@
 //  Copyright © 2017 ChuCuoi. All rights reserved.
 //
 
-import Foundation
-
-final class IncreaseAction: Action {
+final class IncreaseAction: Action<CounterStore.State> {
     typealias State = CounterStore.State
     
     init(additionValue: Int) {
         self.additionValue = additionValue
+        super.init()
     }
     
-    func reduce(state: State) -> State? {
+    override func reduce(state: State) -> State? {
         var state = state
         state.currentValue += additionValue
         return state
     }
     
-    let store: Store<State>? = DI.resolve() as CounterStore?
-    private let additionValue: Int
+    override var store: Store<State>? {
+        return DI.resolve() as CounterStore?
+    }
+    
+    let additionValue: Int
 }

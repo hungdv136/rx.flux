@@ -12,6 +12,14 @@ final class CounterStore: Store<CountState> {
     init(persistence: DbPersistence<State>) {
         super.init(initialState: CountState(), persistence: persistence)
     }
+    
+    override var persistenceTimeout: Double {
+        return 5
+    }
+    
+    override func createRules() -> [Rule] {
+        return [CancelRule(IncreaseAction.self, cancelBehavior: .latest)]
+    }
 }
 
 struct CountState {

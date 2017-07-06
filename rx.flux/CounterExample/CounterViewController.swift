@@ -39,31 +39,30 @@ final class CounterViewController: UIViewController {
         
         counterStore.state
             .map { "\($0.currentValue)" }
-            .do(onNext: {
-                print("state: \($0)")
-            })
             .drive(textField.rx.text)
             .disposed(by: disposeBag)
         
-        let queue: DispatchQueue = DispatchQueue(label: "testing-con", qos: .userInitiated, attributes: .concurrent)
-        let queue2: DispatchQueue = DispatchQueue(label: "testing-con2", qos: .userInitiated, attributes: .concurrent)
+        let queue: DispatchQueue = DispatchQueue(label: "testing-con", qos: .userInitiated)
+        //let queue2: DispatchQueue = DispatchQueue(label: "testing-con2", qos: .userInitiated, attributes: .concurrent)
         
-        for i in 1...30 {
-            test(queue: queue, i: i)
+        let formatter = DateFormatter()
+        formatter.timeStyle = .full
+        
+        for i in 1...100 {
+            test(queue: queue, i: i, formatter: formatter)
         }
         
-        for i in 1...30 {
-            test(queue: queue2, i: -i)
-        }
+//        for i in 1...100 {
+//            test(queue: queue2, i: -i, formatter: formatter)
+//        }
     }
     
-    func test(queue: DispatchQueue, i: Int) {
+    func test(queue: DispatchQueue, i: Int, formatter: DateFormatter) {
         queue.async {
-            //sleep(UInt32(i))
             IncreaseAction(additionValue: i)
                 .dispatch()
                 .do(onNext: { event in
-                    print("\(i) - \(event)")
+                   print("\(i) - \(event) - \(formatter.string(from: Date()))")
                 })
                 .subscribe()
                 .disposed(by: self.disposeBag)

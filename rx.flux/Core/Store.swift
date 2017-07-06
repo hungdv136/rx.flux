@@ -10,8 +10,8 @@ import RxSwift
 import RxCocoa
 import Foundation
 
-public class Store<S> {
-    typealias State = S
+open class Store<S> {
+    public typealias State = S
     
     public init<P: Persistence>(initialState: S, persistence: P) where P.State == S {
         stateVar = Variable(initialState)
@@ -48,14 +48,14 @@ public class Store<S> {
         readySubject.onNext(true)
     }
     
-    open func createRules() -> [DispatchRule] {
+    open func createRules() -> [Rule] {
         return []
     }
     
     // MARK: Internal methods
     
     func dispatch(action: AnyAction) -> Observable<ActionEvent>  {
-        return ready.flatMap { self.dispatcher.dispatch(action: action) }
+        return dispatcher.dispatch(action: action)
     }
     
     func getState() -> S {
@@ -63,9 +63,8 @@ public class Store<S> {
     }
     
     func applyChanges(_ newState: S) {
-        lock.lock()
+        lock.lock(); defer { lock.unlock() }
         stateVar.value = newState
-        lock.unlock()
     }
     
     // MARK: Public properties
@@ -81,7 +80,9 @@ public class Store<S> {
     
     // MARK: Private properties
     
-    private lazy var dispatcher: Dispatcher<S> = { Dispatcher<S>(rulesCreator: self.createRules) }()
+    private lazy var dispatcher: Dispatcher<S> = {
+        return Dispatcher<S>(store: self)
+    }()
     private let stateVar: Variable<S>
     private let readySubject = BehaviorSubject<Bool>(value: false)
     private let disposeBag: DisposeBag = DisposeBag()

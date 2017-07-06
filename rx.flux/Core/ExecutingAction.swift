@@ -15,22 +15,22 @@ public final class ExecutingAction: Hashable {
         self.action = action
     }
     
-    public func after(executingAction: ExecutingAction) {
-        previousIds.insert(executingAction.id)
-        executingAction.hasNextId = true
-    }
-    
-    // MARK: Internal
+    // MARK: Internal methods
     
     func executor() -> Observable<Void> {
-        return action.excutor()
+        return cancelled ? Observable.empty() : action.excutor()
             .take(1)
             .takeUntil(cancelSubject)
             .do(onNext: {
                 self.eventSubject.onNext(.completed)
             }, onError: {
                 self.errorCount += 1
-                self.eventSubject.onNext(.failed($0))
+                if self.shouldRetry {
+                    self.eventSubject.onNext(.retry)
+                }
+                else {
+                    self.eventSubject.onNext(.failed($0))
+                }
             }, onCompleted: {
                 self.eventSubject.onNext(.completed)
                 self.eventSubject.onCompleted()
@@ -45,7 +45,16 @@ public final class ExecutingAction: Hashable {
         previousIds.remove(id)
     }
     
+    // MARK: Public methods
+    
+    public func after(executingAction: ExecutingAction) {
+        previousIds.insert(executingAction.id)
+        executingAction.hasNextId = true
+    }
+    
     public func cancel() {
+        cancelled = true
+        
         guard eventSubject.isDisposed else { return }
         
         cancelSubject.onNext(true)
@@ -55,7 +64,6 @@ public final class ExecutingAction: Hashable {
 
     // MARK: Properties
     
-    public let action: AnyAction
     public private(set) lazy var id: String = NSUUID().uuidString
     public var hashValue: Int {
         return id.hashValue
@@ -63,6 +71,8 @@ public final class ExecutingAction: Hashable {
     
     // MARK: Internal
     
+    let action: AnyAction
+    private(set) var cancelled: Bool = false
     private(set) var hasNextId: Bool = false
     private(set) lazy var previousIds: Set<String> = Set<String>()
     
@@ -75,7 +85,7 @@ public final class ExecutingAction: Hashable {
     }
     
     // MARK: Private
-    
+
     private lazy var errorCount: Int = 0
     private lazy var cancelSubject = PublishSubject<Bool>()
     private lazy var eventSubject = PublishSubject<ActionEvent>()
