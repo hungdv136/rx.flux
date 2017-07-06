@@ -80,9 +80,7 @@ extension Dispatcher {
                 }
             }
             else {
-                self?.queue.async {
-                    self?.executeNextAction(action)
-                }
+                self?.queue.async { self?.executeNextAction(action) }
             }
         }, onCompleted: { [weak self] in
             self?.queue.async { self?.executeNextAction(action) }
