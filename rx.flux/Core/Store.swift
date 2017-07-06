@@ -10,7 +10,11 @@ import RxSwift
 import RxCocoa
 import Foundation
 
-open class Store<S> {
+public protocol AnyStore: class {
+    var ready: Observable<Void> { get }
+}
+
+open class Store<S>: AnyStore {
     public typealias State = S
     
     public init<P: Persistence>(initialState: S, persistence: P) where P.State == S {
@@ -54,8 +58,8 @@ open class Store<S> {
     
     // MARK: Internal methods
     
-    func dispatch(action: AnyAction) -> Observable<ActionEvent>  {
-        return dispatcher.dispatch(action: action)
+    func dispatchWithObservable(action: AnyExecutableAction) -> Observable<ActionEvent>  {
+        return dispatcher.dispatchWithObservable(action: action)
     }
     
     func getState() -> S {
@@ -76,12 +80,12 @@ open class Store<S> {
     
     // MARK: Internal properties
     
-    lazy var ready: Observable<Void> = self.readySubject.filter { $0 }.take(1).map { _ in }
+    public lazy var ready: Observable<Void> = self.readySubject.filter { $0 }.take(1).map { _ in }
     
     // MARK: Private properties
     
     private lazy var dispatcher: Dispatcher<S> = {
-        return Dispatcher<S>(store: self)
+        return Dispatcher<S>(dispatchRules: self.createRules())
     }()
     private let stateVar: Variable<S>
     private let readySubject = BehaviorSubject<Bool>(value: false)

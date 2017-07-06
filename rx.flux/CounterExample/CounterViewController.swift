@@ -33,7 +33,7 @@ final class CounterViewController: UIViewController {
         let plus = plusButton.rx.tap.map { 1 }
     
         Observable.merge(minus, plus)
-            .flatMap { IncreaseAction(additionValue: $0).dispatch() }
+            .flatMap { IncreaseAction(additionValue: $0).dispatchWithObservable() }
             .subscribe()
             .disposed(by: disposeBag)
         
@@ -60,7 +60,7 @@ final class CounterViewController: UIViewController {
     func test(queue: DispatchQueue, i: Int, formatter: DateFormatter) {
         queue.async {
             IncreaseAction(additionValue: i)
-                .dispatch()
+                .dispatchWithObservable()
                 .do(onNext: { event in
                    print("\(i) - \(event) - \(formatter.string(from: Date()))")
                 })

@@ -13,11 +13,11 @@ public enum CancelBehavior: Int {
 }
 
 public class CancelRule: ConditionalRule {
-    public convenience init<T: AnyActionType>(_ dispatchingType: T.Type, cancelBehavior: CancelBehavior = .first) {
+    public convenience init<T: AnyAction>(_ dispatchingType: T.Type, cancelBehavior: CancelBehavior = .first) {
         self.init(dispatchingType: dispatchingType, executingType: dispatchingType, cancelBehavior: cancelBehavior)
     }
     
-    public init<T: AnyActionType>(dispatchingType: T.Type,
+    public init<T: AnyAction>(dispatchingType: T.Type,
                 executingType: T.Type,
                 cancelBehavior: CancelBehavior = .first,
                 condition: ConditionalHandler? = nil) {
@@ -45,7 +45,7 @@ public class CancelRule: ConditionalRule {
     }
     
     private let cancelBehavior: CancelBehavior
-    private let dispatchingType: AnyActionType.Type
-    private let executingType: AnyActionType.Type
+    private let dispatchingType: AnyAction.Type
+    private let executingType: AnyAction.Type
     let condition: ConditionalHandler?
 }

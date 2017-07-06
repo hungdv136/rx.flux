@@ -10,14 +10,14 @@ public protocol Rule {
     func execute(dispatchingAction: ExecutingAction, actions: [ExecutingAction])
 }
 
-public typealias ConditionalHandler = (_ dispatchingAction: AnyActionType, _ executingAction: AnyActionType) -> Bool
+public typealias ConditionalHandler = (_ dispatchingAction: AnyAction, _ executingAction: AnyAction) -> Bool
 
 protocol ConditionalRule: Rule {
     var condition: ConditionalHandler? { get }
 }
 
 extension ConditionalRule {
-    func evaluateCondition(_ dispatchingAction: AnyAction, _ executingAction: AnyAction) -> Bool {
+    func evaluateCondition(_ dispatchingAction: AnyExecutableAction, _ executingAction: AnyExecutableAction) -> Bool {
         guard let condition = condition else { return true }
         return condition(dispatchingAction, executingAction)
     }

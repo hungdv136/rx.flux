@@ -7,14 +7,14 @@
 //
 
 public class SequenceRule: ConditionalRule {
-    init<T: AnyActionType>(type: T.Type, types: T.Type...) {
+    init<T: AnyAction>(type: T.Type, types: T.Type...) {
         condition = nil
         var types = types
         types.insert(type, at: 0)
         self.types = types
     }
     
-    init<T: AnyActionType>(type1: T.Type, type2: T.Type, condition: ConditionalHandler? = nil) {
+    init<T: AnyAction>(type1: T.Type, type2: T.Type, condition: ConditionalHandler? = nil) {
         self.condition = condition
         self.types = [type1, type2]
     }
@@ -41,6 +41,6 @@ public class SequenceRule: ConditionalRule {
         }
     }
     
-    private let types: [AnyActionType.Type]
+    private let types: [AnyAction.Type]
     let condition: ConditionalHandler?
 }

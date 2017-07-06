@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 
 public final class ExecutingAction: Hashable {
-    init(action: AnyAction) {
+    init(action: AnyExecutableAction) {
         self.action = action
     }
     
@@ -71,7 +71,7 @@ public final class ExecutingAction: Hashable {
     
     // MARK: Internal
     
-    let action: AnyAction
+    let action: AnyExecutableAction
     private(set) var cancelled: Bool = false
     private(set) var hasNextId: Bool = false
     private(set) lazy var previousIds: Set<String> = Set<String>()

@@ -14,7 +14,7 @@ final class CounterStore: Store<CountState> {
     }
     
     override var persistenceTimeout: Double {
-        return 5
+        return 1
     }
     
     override func createRules() -> [Rule] {

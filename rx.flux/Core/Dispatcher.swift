@@ -10,15 +10,13 @@ import RxSwift
 import RxCocoa
 import Foundation
 
-public final class Dispatcher<S> {
-    init(store: Store<S>) {
-        dispatchRules = store.createRules()
-        self.store = store
+final class Dispatcher<S> {
+    init(dispatchRules: [Rule]) {
+        self.dispatchRules = dispatchRules
     }
     
     fileprivate let dispatchRules: [Rule]
     fileprivate let disposeBag = DisposeBag()
-    fileprivate weak var store: Store<S>?
     fileprivate var isExecuting = false
     fileprivate lazy var waitingItems: [ExecutingAction] = []
     fileprivate lazy var executingItems: Set<ExecutingAction> = Set<ExecutingAction>()
@@ -28,22 +26,22 @@ public final class Dispatcher<S> {
 // MARK: Dispatch
 
 extension Dispatcher {
-    func dispatch(action: AnyAction) -> Observable<ActionEvent> {
+    func dispatchWithObservable(action: AnyExecutableAction) -> Observable<ActionEvent> {
         let executingAction = ExecutingAction(action: action)
         return executingAction.event.do(onSubscribe: {
             self.dispatching(executingAction)
         })
     }
     
-    func dispatch(action: AnyAction) {
+    func dispatch(action: AnyExecutableAction) {
         dispatching(ExecutingAction(action: action))
     }
     
-    private func dispatching(_ action: ExecutingAction) {
+    private func dispatching(_ executableAction: ExecutingAction) {
         queue.async {
-            self.dispatchRules.forEach { $0.execute(dispatchingAction: action, actions: self.waitingItems) }
-            self.waitingItems.append(action)
-            self.store?.ready.subscribe(onNext: { [weak self] in
+            self.dispatchRules.forEach { $0.execute(dispatchingAction: executableAction, actions: self.waitingItems) }
+            self.waitingItems.append(executableAction)
+            executableAction.action.storeReady.subscribe(onNext: { [weak self] in
                 self?.execute()
             }).disposed(by: self.disposeBag)
         }
@@ -60,7 +58,7 @@ extension Dispatcher {
         executeRecursive()
     }
     
-    fileprivate func executeRecursive() {
+    private func executeRecursive() {
         let readyActions = getReadyActions()
         isExecuting = !readyActions.isEmpty
         
@@ -73,7 +71,7 @@ extension Dispatcher {
         executeRecursive()
     }
     
-    fileprivate func executeAction(_ action: ExecutingAction) {
+    private func executeAction(_ action: ExecutingAction) {
         action.executor().subscribe(onError: { [weak self] _ in
             if action.shouldRetry {
                 self?.queue.async {
@@ -91,7 +89,7 @@ extension Dispatcher {
         }).disposed(by: disposeBag)
     }
     
-    fileprivate func executeNextAction(_ action: ExecutingAction) {
+    private func executeNextAction(_ action: ExecutingAction) {
         waitingItems = waitingItems.filter { $0.id != action.id }
         executingItems.remove(action)
         
