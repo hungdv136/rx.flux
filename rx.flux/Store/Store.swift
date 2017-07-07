@@ -74,7 +74,7 @@ open class Store<S>: AnyStore {
     // MARK: Public properties
     
     public lazy var state: Driver<S> = self.stateVar.asDriver()
-    public var persistenceTimeout: Double {
+    open var persistenceTimeout: Double {
         return 60
     }
     
