@@ -3,10 +3,6 @@ use_frameworks!
 target 'rx.flux' do
     pod 'RxSwift',    '~> 3.5.0'
     pod 'RxCocoa',    '~> 3.5.0'
-    pod 'YapDatabase'
-    pod 'Swinject'
-    pod 'SwinjectStoryboard'
-    pod 'PureLayout'
 end
 
 post_install do |installer|
