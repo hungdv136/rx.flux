@@ -17,14 +17,14 @@ public class CancelRule: ConditionalRule {
         self.init(dispatchingType: dispatchingType, executingType: dispatchingType, cancelBehavior: cancelBehavior)
     }
     
-    public init<T: AnyAction>(dispatchingType: T.Type,
-                executingType: T.Type,
+    public init<T1: AnyAction, T2: AnyAction>(dispatchingType: T1.Type,
+                executingType: T2.Type,
                 cancelBehavior: CancelBehavior = .first,
-                condition: ConditionalHandler? = nil) {
+                condition: ((_ dispatchingAction: T1, _ executingAction: T2) -> Bool)? = nil) {
         
         self.dispatchingType = dispatchingType
         self.executingType = executingType
-        self.condition = condition
+        self.condition = convert(condition: condition)
         self.cancelBehavior = cancelBehavior
     }
     
@@ -32,7 +32,7 @@ public class CancelRule: ConditionalRule {
     public func execute(dispatchingAction: ExecutingAction, actions: [ExecutingAction]) {
         guard type(of: dispatchingAction.action) == dispatchingType else { return }
         actions.forEach {
-            if type(of: $0.action) == executingType && self.evaluateCondition(dispatchingAction.action, $0.action) {
+            if type(of: $0.action) == executingType && evaluteCondition(dispatchingAction.action, $0.action) {
                 switch cancelBehavior {
                 case .first:
                     $0.cancel()

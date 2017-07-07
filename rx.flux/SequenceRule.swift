@@ -7,15 +7,15 @@
 //
 
 public class SequenceRule: ConditionalRule {
-    init<T: AnyAction>(type: T.Type, types: T.Type...) {
+    init<T: AnyAction>(type: T.Type, types: AnyAction.Type...) {
         condition = nil
         var types = types
         types.insert(type, at: 0)
         self.types = types
     }
     
-    init<T: AnyAction>(type1: T.Type, type2: T.Type, condition: ConditionalHandler? = nil) {
-        self.condition = condition
+    init<T1: AnyAction, T2: AnyAction>(type1: T1.Type, type2: T2.Type, condition: ((_ dispatchingAction: T1, _ executingAction: T2) -> Bool)? = nil) {
+        self.condition = convert(condition: condition)
         self.types = [type1, type2]
     }
     
@@ -25,7 +25,7 @@ public class SequenceRule: ConditionalRule {
         
         if condition != nil && dispatchingType == type(of: types.last) {
             actions.forEach {
-                if type(of: $0.action) == type(of: types.first) && evaluateCondition(dispatchingAction.action, $0.action) {
+                if type(of: $0.action) == type(of: types.first) && evaluteCondition(dispatchingAction.action, $0.action) {
                     dispatchingAction.after(executingAction: $0)
                 }
             }
@@ -34,7 +34,7 @@ public class SequenceRule: ConditionalRule {
         guard condition == nil, let index = types.index(where: { $0 == dispatchingType }) else { return }
         actions.forEach {
             for i in 0...index {
-                if types[i] ==  type(of: $0.action) {
+                if types[i] == type(of: $0.action) {
                     dispatchingAction.after(executingAction: $0)
                 }
             }
