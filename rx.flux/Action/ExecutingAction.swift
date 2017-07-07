@@ -32,7 +32,6 @@ public final class ExecutingAction: Hashable {
                     self.eventSubject.onNext(.failed($0))
                 }
             }, onCompleted: {
-                self.eventSubject.onNext(.completed)
                 self.eventSubject.onCompleted()
             }, onSubscribe: {
                 self.eventSubject.onNext(.start)
