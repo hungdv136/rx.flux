@@ -21,15 +21,13 @@ open class AsyncAction<State, Result>: Action<State> {
     }
     
     public override func dispatchAsObservable() -> Observable<ActionEvent> {
-        guard let store = store else { return Observable.empty() }
         beforeDispatch()
-        return store.dispatchAsObservable(action: self)
+        return store?.dispatchAsObservable(action: self) ?? Observable.empty()
     }
     
     public override func dispatch() {
-        guard let store = store else { return }
         beforeDispatch()
-        store.dispatch(action: self)
+        store?.dispatch(action: self)
     }
     
     override func excutor() -> Observable<Void> {
@@ -43,7 +41,7 @@ open class AsyncAction<State, Result>: Action<State> {
     }
     
     private func beforeDispatch() {
-        if let newState = reduce(state: store.getState()) {
+        if let store = store, let newState = reduce(state: store.getState()) {
             store.applyChanges(newState)
         }
     }

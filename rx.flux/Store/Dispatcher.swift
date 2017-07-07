@@ -26,14 +26,14 @@ final class Dispatcher<S> {
 // MARK: Dispatch
 
 extension Dispatcher {
-    func dispatchAsObservable(action: AnyAction) -> Observable<ActionEvent> {
+    func dispatchAsObservable(action: AnyExecutableAction) -> Observable<ActionEvent> {
         let executingAction = ExecutingAction(action: action)
         return executingAction.event.do(onSubscribe: {
             self.dispatching(executingAction)
         })
     }
     
-    func dispatch(action: AnyAction) {
+    func dispatch(action: AnyExecutableAction) {
         dispatching(ExecutingAction(action: action))
     }
     

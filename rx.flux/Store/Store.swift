@@ -58,11 +58,11 @@ open class Store<S>: AnyStore {
     
     // MARK: Internal methods
     
-    func dispatchAsObservable(action: AnyAction) -> Observable<ActionEvent>  {
+    func dispatchAsObservable(action: AnyExecutableAction) -> Observable<ActionEvent>  {
         return dispatcher.dispatchAsObservable(action: action)
     }
     
-    func dispatch(action: AnyAction)  {
+    func dispatch(action: AnyExecutableAction)  {
         dispatcher.dispatch(action: action)
     }
 
