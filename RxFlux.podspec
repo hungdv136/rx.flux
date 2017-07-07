@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = '9.0'
 
-  s.source_files = '*.swift'
+  s.source_files = 'rx.flux/**/*.swift'
 
   s.dependency 'RxSwift', '~> 3.5.0'
   s.dependency 'RxCocoa', '~> 3.5.0'
