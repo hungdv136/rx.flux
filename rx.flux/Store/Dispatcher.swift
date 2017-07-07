@@ -20,7 +20,7 @@ final class Dispatcher<S> {
     fileprivate var isExecuting = false
     fileprivate lazy var waitingItems: [ExecutingAction] = []
     fileprivate lazy var executingItems: Set<ExecutingAction> = Set<ExecutingAction>()
-    fileprivate lazy var queue: DispatchQueue = DispatchQueue(label: "flux-queue.dispatcher.dispatching", qos: .userInitiated)
+    fileprivate lazy var queue: DispatchQueue = DispatchQueue(label: "flux-queue.dispatcher.\(UUID().uuidString)", qos: .userInitiated)
 }
 
 // MARK: Dispatch
