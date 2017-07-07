@@ -7,14 +7,14 @@
 //
 
 public class SequenceRule: ConditionalRule {
-    init<T: AnyAction>(type: T.Type, types: AnyAction.Type...) {
+    public init<T: AnyAction>(type: T.Type, types: AnyAction.Type...) {
         condition = nil
         var types = types
         types.insert(type, at: 0)
         self.types = types
     }
     
-    init<T1: AnyAction, T2: AnyAction>(type1: T1.Type, type2: T2.Type, condition: ((_ dispatchingAction: T1, _ executingAction: T2) -> Bool)? = nil) {
+    public init<T1: AnyAction, T2: AnyAction>(type1: T1.Type, type2: T2.Type, condition: ((_ dispatchingAction: T1, _ executingAction: T2) -> Bool)? = nil) {
         self.condition = convert(condition: condition)
         self.types = [type1, type2]
     }
