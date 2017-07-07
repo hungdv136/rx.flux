@@ -20,14 +20,16 @@ open class AsyncAction<State, Result>: Action<State> {
         fatalError("\(type(of: self)) - The sub-class have to override the 'execute' method.")
     }
     
-    public override func dispatchWithObservable() -> Observable<ActionEvent> {
+    public override func dispatchAsObservable() -> Observable<ActionEvent> {
         guard let store = store else { return Observable.empty() }
-        
-        if let newState = reduce(state: store.getState()) {
-            store.applyChanges(newState)
-        }
-        
-        return store.dispatchWithObservable(action: self)
+        beforeDispatch()
+        return store.dispatchAsObservable(action: self)
+    }
+    
+    public override func dispatch() {
+        guard let store = store else { return }
+        beforeDispatch()
+        store.dispatch(action: self)
     }
     
     override func excutor() -> Observable<Void> {
@@ -38,5 +40,11 @@ open class AsyncAction<State, Result>: Action<State> {
                 guard let newState = self.reduce(state: store.getState(), result: $0) else { return }
                 store.applyChanges(newState)
             }).map { _ in }
+    }
+    
+    private func beforeDispatch() {
+        if let newState = reduce(state: store.getState()) {
+            store.applyChanges(newState)
+        }
     }
 }

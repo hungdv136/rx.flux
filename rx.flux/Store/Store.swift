@@ -20,7 +20,7 @@ open class Store<S>: AnyStore {
     public init<P: Persistence>(initialState: S, persistence: P) where P.State == S {
         stateVar = Variable(initialState)
         
-        let timeout = Observable<Int>
+        let timeout = persistenceTimeout == 0 ? Observable.never() : Observable<Int>
             .interval(persistenceTimeout, scheduler: MainScheduler.instance)
             .do(onNext: { _ in
                 print("Initializing the state takes long time to run. It's being cancelled.")
@@ -58,10 +58,14 @@ open class Store<S>: AnyStore {
     
     // MARK: Internal methods
     
-    func dispatchWithObservable(action: AnyExecutableAction) -> Observable<ActionEvent>  {
-        return dispatcher.dispatchWithObservable(action: action)
+    func dispatchAsObservable(action: AnyAction) -> Observable<ActionEvent>  {
+        return dispatcher.dispatchAsObservable(action: action)
     }
     
+    func dispatch(action: AnyAction)  {
+        dispatcher.dispatch(action: action)
+    }
+
     func getState() -> S {
         return stateVar.value
     }
@@ -74,6 +78,7 @@ open class Store<S>: AnyStore {
     // MARK: Public properties
     
     public lazy var state: Driver<S> = self.stateVar.asDriver()
+    
     open var persistenceTimeout: Double {
         return 60
     }

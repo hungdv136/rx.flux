@@ -32,8 +32,12 @@ open class Action<State>: AnyExecutableAction {
         return nil
     }
     
-    public func dispatchWithObservable() -> Observable<ActionEvent> {
-        return store?.dispatchWithObservable(action: self) ?? Observable.empty()
+    public func dispatchAsObservable() -> Observable<ActionEvent> {
+        return store?.dispatchAsObservable(action: self) ?? Observable.empty()
+    }
+    
+    public func dispatch() {
+        store?.dispatch(action: self)
     }
     
     func excutor() -> Observable<Void> {
