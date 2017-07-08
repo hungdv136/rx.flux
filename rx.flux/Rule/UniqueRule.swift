@@ -1,6 +1,9 @@
 //
 //  CancelRule.swift
 //  rx.flux
+//  This rule is to ensure that only one action can be executed at the same time. 
+//  If there are two actions in the queue, one of them will be canceled. 
+//  If cancelBehavior = .first, the first action will be cancel. 
 //
 //  Created by Hung Dinh Van on 7/6/17.
 //  Copyright © 2017 ChuCuoi. All rights reserved.
@@ -12,7 +15,7 @@ public enum CancelBehavior: Int {
     case latest
 }
 
-public class CancelRule: ConditionalRule {
+public class UniqueRule: ConditionalRule {
     public convenience init<T: AnyAction>(_ dispatchingType: T.Type, cancelBehavior: CancelBehavior = .first) {
         self.init(dispatchingType: dispatchingType, executingType: dispatchingType, cancelBehavior: cancelBehavior)
     }
