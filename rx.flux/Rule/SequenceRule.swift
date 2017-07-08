@@ -1,6 +1,7 @@
 //
 //  SequenceRule.swift
 //  rx.flux
+//  This rule is to ensure that two or more actions will be ran in sequence.
 //
 //  Created by Hung Dinh Van on 7/6/17.
 //  Copyright © 2017 ChuCuoi. All rights reserved.
