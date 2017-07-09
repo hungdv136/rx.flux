@@ -41,12 +41,31 @@ override var store: Store<State>? {
 
 ## Control executing sequence.
 
-If you want to have only one action can be executed at the same time, you can define ```swift UniqueRule(YourAction.self, cancelBehavior: .first) ```, then attach it into the store (cancelBehavior: .first means that the first action will be canceled). In addition, you can use ’condition’ parameter that is a closure parameter to add a condition into your rule.
+If you want to have only one action can be executed at the same time, you can define like this
+```swift 
+UniqueRule(YourAction.self, cancelBehavior: .first) 
+```
 
-Another case, you have two or more actions such as: A1, A2, … you want these actions to be executed in sequence (complete side-effects, reduce in sequence). You can achieve easily by adding a new rule:  SequenceRule(A1.self, A2.self, condition: your-closure) or SequenceRule(A1.self, A2.self, … An.self)
+Then attach it into the store (cancelBehavior: .first means that the first action will be canceled). In addition, you can use ’condition’ parameter that is a closure parameter to add a condition into your rule.
+
+Another case, you have two or more actions such as: A1, A2, … you want these actions to be executed in sequence (complete side-effects, reduce in sequence). You can achieve easily by adding a new rule:  
+
+```swift
+SequenceRule(A1.self, A2.self, condition: your-closure) 
+```
+or 
+
+```swift
+SequenceRule(A1.self, A2.self, … An.self)
+```
 
 Or you can define your new rules by subclassing the protocol Rule.
 
+```swift
+public protocol Rule {
+    func execute(dispatchingAction: ExecutingAction, actions: [ExecutingAction])
+}
+```
 
 ## Support Offline
 
