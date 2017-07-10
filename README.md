@@ -18,7 +18,7 @@ In the original Flux implementation, when you add a new Action, you also have to
 In this framework, what you have to do is to add a new action that inherits from Action or AsyncAcion, then override these methods:
 
 ```swift
-// This method is a pure a function describes how to transform you state 
+// This method is a pure function describes how to transform you state 
 
 override func reduce(state: CountState, result: Int) -> CountState? {
 	var state = state
@@ -79,5 +79,5 @@ public protocol Persistence {
 }
 ```
 
-We will support the actions can be cached soon.
+We will support caching actions soon.
 
