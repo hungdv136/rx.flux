@@ -15,6 +15,16 @@ public final class ExecutingAction: Hashable {
         self.action = action
     }
     
+    deinit {
+        if !cancelSubject.isDisposed {
+            cancelSubject.dispose()
+        }
+        
+        if !eventSubject.isDisposed {
+            eventSubject.dispose()
+        }
+    }
+    
     // MARK: Internal methods
     
     func executor() -> Observable<Void> {
