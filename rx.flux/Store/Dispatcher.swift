@@ -41,11 +41,11 @@ extension Dispatcher {
         queue.async {
             self.dispatchRules.forEach { $0.execute(dispatchingAction: executableAction, actions: self.waitingItems) }
             self.waitingItems.append(executableAction)
-            self.registerDispatching(executableAction)
+            self.registerExecuting(executableAction)
         }
     }
     
-    private func registerDispatching(_ executableAction: ExecutingAction) {
+    private func registerExecuting(_ executableAction: ExecutingAction) {
         executableAction.action.storeReady.subscribe(onNext: { [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.queue.async(execute: strongSelf.execute)
@@ -78,14 +78,14 @@ extension Dispatcher {
     
     private func executeAction(_ action: ExecutingAction) {
         action.executor().subscribe(onError: { [weak self] _ in
-            if action.shouldRetry {
-                self?.queue.async {
-                    self?.executingItems.remove(action)
-                    self?.execute()
-                }
-            }
-            else {
+            guard action.shouldRetry else {
                 self?.queue.async { self?.executeNextAction(action) }
+                return
+            }
+            
+            self?.queue.async {
+                self?.executingItems.remove(action)
+                self?.execute()
             }
         }, onCompleted: { [weak self] in
             self?.queue.async { self?.executeNextAction(action) }
