@@ -29,22 +29,27 @@ extension Dispatcher {
     func dispatchAsObservable(action: AnyExecutableAction) -> Observable<ActionEvent> {
         let executingAction = ExecutingAction(action: action)
         return executingAction.event.do(onSubscribe: {
-            self.dispatching(executingAction)
+            self.dispatch(executingAction)
         })
     }
     
     func dispatch(action: AnyExecutableAction) {
-        dispatching(ExecutingAction(action: action))
+        dispatch(ExecutingAction(action: action))
     }
     
-    private func dispatching(_ executableAction: ExecutingAction) {
+    private func dispatch(_ executableAction: ExecutingAction) {
         queue.async {
             self.dispatchRules.forEach { $0.execute(dispatchingAction: executableAction, actions: self.waitingItems) }
             self.waitingItems.append(executableAction)
-            executableAction.action.storeReady.subscribe(onNext: { [weak self] in
-                self?.execute()
-            }).disposed(by: self.disposeBag)
+            self.registerDispatching(executableAction)
         }
+    }
+    
+    private func registerDispatching(_ executableAction: ExecutingAction) {
+        executableAction.action.storeReady.subscribe(onNext: { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.queue.async(execute: strongSelf.execute)
+        }).disposed(by: disposeBag)
     }
 }
 
