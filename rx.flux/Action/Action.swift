@@ -33,10 +33,12 @@ open class Action<State>: AnyExecutableAction {
     }
     
     public func dispatchAsObservable() -> Observable<ActionEvent> {
+        willDispatch()
         return store?.dispatchAsObservable(action: self) ?? Observable.empty()
     }
     
     public func dispatch() {
+        willDispatch()
         store?.dispatch(action: self)
     }
     
@@ -47,6 +49,8 @@ open class Action<State>: AnyExecutableAction {
                 store.applyChanges(newState)
             })
     }
+    
+    func willDispatch() { }
     
     open var store: Store<State>? {
         fatalError("\(type(of: self)) - The sub-class have to override the 'store' property.")
