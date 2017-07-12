@@ -1,5 +1,5 @@
 //
-//  Dispatcher.swift
+//  Store.swift
 //  rx.flux
 //
 //  Created by Hung Dinh Van on 6/26/17.
@@ -19,6 +19,8 @@ open class Store<S>: AnyStore {
     
     public init<P: Persistence>(initialState: S, persistence: P) where P.State == S {
         stateVar = Variable(initialState)
+        state = stateVar.asDriver()
+        ready = readySubject.filter { $0 }.take(1).map { _ in }
         
         let timeout = persistenceTimeout == 0 ? Observable.never() : Observable<Int>
             .interval(persistenceTimeout, scheduler: MainScheduler.instance)
@@ -33,8 +35,8 @@ open class Store<S>: AnyStore {
             .subscribe(onNext: { [weak self] in
                 guard let state = $0 else { return }
                 self?.applyChanges(state)
-            }, onError: {
-                print("An error occurred: \($0.localizedDescription)")
+                }, onError: {
+                    print("An error occurred: \($0.localizedDescription)")
             }, onDisposed: { [weak self] in
                 self?.readySubject.onNext(true)
             }).disposed(by: disposeBag)
@@ -49,6 +51,8 @@ open class Store<S>: AnyStore {
     
     public init(initialState: S) {
         stateVar = Variable(initialState)
+        state = stateVar.asDriver()
+        ready = readySubject.filter { $0 }.take(1).map { _ in }
         readySubject.onNext(true)
     }
     
@@ -65,7 +69,7 @@ open class Store<S>: AnyStore {
     func dispatch(action: AnyExecutableAction)  {
         dispatcher.dispatch(action: action)
     }
-
+    
     func getState() -> S {
         return stateVar.value
     }
@@ -77,15 +81,9 @@ open class Store<S>: AnyStore {
     
     // MARK: Public properties
     
-    public lazy var state: Driver<S> = self.stateVar.asDriver()
-    
-    open var persistenceTimeout: Double {
-        return 60
-    }
-    
-    // MARK: Internal properties
-    
-    public lazy var ready: Observable<Void> = self.readySubject.filter { $0 }.take(1).map { _ in }
+    public let state: Driver<S>
+    public let ready: Observable<Void>
+    open var persistenceTimeout: Double { return 60 }
     
     // MARK: Private properties
     

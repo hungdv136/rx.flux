@@ -32,12 +32,12 @@ open class Action<State>: AnyExecutableAction {
         return nil
     }
     
-    public func dispatchAsObservable() -> Observable<ActionEvent> {
+    final public func dispatchAsObservable() -> Observable<ActionEvent> {
         willDispatch()
         return store?.dispatchAsObservable(action: self) ?? Observable.empty()
     }
     
-    public func dispatch() {
+    final public func dispatch() {
         willDispatch()
         store?.dispatch(action: self)
     }
