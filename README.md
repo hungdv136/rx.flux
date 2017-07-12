@@ -39,6 +39,8 @@ override var store: Store<State>? {
 }
 ```
 
+That's all. No more extra code requires.
+
 ## Control executing sequence.
 
 If you want to have only one action can be executed at the same time, you can define like this
@@ -69,7 +71,7 @@ public protocol Rule {
 
 ## Support Offline
 
-If you want to cache your data to support offline mode, you should create a new class that inherits from this protocol.
+If you want to cache your data to support offline mode, you should create a new class that inherits from this protocol. Then attach it into the store. Otherwise, everything is still working without supporting offline storage.
 
 ```swift
 public protocol Persistence {
@@ -78,6 +80,4 @@ public protocol Persistence {
 	func load() -> Observable<State?>
 }
 ```
-
-We will support caching actions soon.
 
