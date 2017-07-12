@@ -7,7 +7,7 @@ What are the differences between this framework and other Flux framework?
 
 ## Multiple Threads
 
-Unlike the most of Flux frameworks, we don’t dispatch and execute all actions in the same thread. Instead we execute actions in different stores in different threads and execute all of actions in each store in the same thread. This helps to improve performance if the application has a lot of stores and actions.
+Unlike the most of Flux frameworks, we don’t dispatch and execute all actions in the the main thread. Instead, we do it under background thread. We also execute actions in different stores in different threads and execute all of actions in each store in the same thread. This helps to improve performance if the application has a lot of stores and actions.
 
 ## Object Oriented Programming
 
