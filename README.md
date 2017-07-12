@@ -1,5 +1,5 @@
 # OOP variant of Flux Architecture in Swift
-A combine Rx - Flux framework for those who want to use Flux for building an application with Object Oriented Programming. 
+A Flux library for those who want to use Flux for building an application with Object Oriented Programming. It also uses Reactive Programming for state change propagation.
 
 Example: https://github.com/hungdv136/rx.flux-counter-example
 
