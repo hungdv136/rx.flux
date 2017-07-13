@@ -46,6 +46,7 @@ public final class ExecutingAction: Hashable {
             }, onSubscribe: {
                 self.eventSubject.onNext(.start)
             }, onDispose: {
+                guard !self.cancelled, !self.cancelSubject.isDisposed else { return }
                 self.cancelSubject.onCompleted()
             })
     }
@@ -62,12 +63,10 @@ public final class ExecutingAction: Hashable {
     }
     
     public func cancel() {
+        guard !cancelled, !cancelSubject.isDisposed else { return }
+        
         cancelled = true
-        
-        guard eventSubject.isDisposed else { return }
-        
         cancelSubject.onNext(true)
-        eventSubject.onCompleted()
         cancelSubject.onCompleted()
     }
 
