@@ -10,14 +10,17 @@ import RxSwift
 import RxCocoa
 import Foundation
 
-public protocol AnyStore: class {
+protocol AnyStore: class {
     var ready: Observable<Void> { get }
+    var rules: [Rule] { get }
 }
 
 open class Store<S>: AnyStore {
     public typealias State = S
     
-    public init<P: Persistence>(initialState: S, persistence: P) where P.State == S {
+    public init<P: Persistence>(initialState: S, dispatcher: Dispatcher, rules: [Rule], persistence: P) where P.State == S {
+        self.rules = rules
+        self.dispatcher = dispatcher
         stateVar = Variable(initialState)
         state = stateVar.asDriver()
         ready = readySubject.filter { $0 }.take(1).map { _ in }
@@ -49,15 +52,13 @@ open class Store<S>: AnyStore {
             }).disposed(by: disposeBag)
     }
     
-    public init(initialState: S) {
+    public init(initialState: S, dispatcher: Dispatcher, rules: [Rule]) {
+        self.rules = rules
+        self.dispatcher = dispatcher
         stateVar = Variable(initialState)
         state = stateVar.asDriver()
         ready = readySubject.filter { $0 }.take(1).map { _ in }
         readySubject.onNext(true)
-    }
-    
-    open func createRules() -> [Rule] {
-        return []
     }
     
     // MARK: Internal methods
@@ -85,11 +86,11 @@ open class Store<S>: AnyStore {
     public let ready: Observable<Void>
     open var persistenceTimeout: Double { return 60 }
     
+    let rules: [Rule]
+    
     // MARK: Private properties
     
-    private lazy var dispatcher: Dispatcher<S> = {
-        return Dispatcher<S>(dispatchRules: self.createRules())
-    }()
+    private let dispatcher: Dispatcher
     private let stateVar: Variable<S>
     private let readySubject = BehaviorSubject<Bool>(value: false)
     private let disposeBag: DisposeBag = DisposeBag()

@@ -10,17 +10,17 @@ import RxSwift
 import RxCocoa
 import Foundation
 
-final class Dispatcher<S> {
-    init(dispatchRules: [Rule]) {
-        self.dispatchRules = dispatchRules
+public final class Dispatcher {
+    public init() {
+        queue = DispatchQueue(label: "flux-queue.dispatcher.\(name)", qos: .userInitiated)
     }
     
-    fileprivate let dispatchRules: [Rule]
+    fileprivate let name = UUID().uuidString
     fileprivate let disposeBag = DisposeBag()
     fileprivate var isExecuting = false
-    fileprivate lazy var waitingItems: [ExecutingAction] = []
-    fileprivate lazy var executingItems: Set<ExecutingAction> = Set<ExecutingAction>()
-    fileprivate lazy var queue: DispatchQueue = DispatchQueue(label: "flux-queue.dispatcher.\(UUID().uuidString)", qos: .userInitiated)
+    fileprivate var waitingItems: [ExecutingAction] = []
+    fileprivate var executingItems: Set<ExecutingAction> = Set<ExecutingAction>()
+    fileprivate let queue: DispatchQueue
 }
 
 // MARK: Dispatch
@@ -28,9 +28,10 @@ final class Dispatcher<S> {
 extension Dispatcher {
     func dispatchAsObservable(action: AnyExecutableAction) -> Observable<ActionEvent> {
         let executingAction = ExecutingAction(action: action)
-        return executingAction.event.do(onSubscribe: {
-            self.dispatch(executingAction)
-        })
+        return executingAction.event
+            .do(onSubscribed: {
+                self.dispatch(executingAction)
+            })
     }
     
     func dispatch(action: AnyExecutableAction) {
@@ -39,14 +40,14 @@ extension Dispatcher {
     
     private func dispatch(_ executableAction: ExecutingAction) {
         queue.async {
-            self.dispatchRules.forEach { $0.execute(dispatchingAction: executableAction, actions: self.waitingItems) }
+            executableAction.action.getStore()?.rules.forEach { $0.execute(dispatchingAction: executableAction, actions: self.waitingItems) }
             self.waitingItems.append(executableAction)
             self.registerExecuting(executableAction)
         }
     }
     
     private func registerExecuting(_ executableAction: ExecutingAction) {
-        executableAction.action.storeReady.subscribe(onNext: { [weak self] in
+        executableAction.action.getStore()?.ready.subscribe(onNext: { [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.queue.async(execute: strongSelf.execute)
         }).disposed(by: disposeBag)

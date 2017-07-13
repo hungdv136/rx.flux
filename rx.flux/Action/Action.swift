@@ -8,6 +8,8 @@
 
 import RxSwift
 
+// MARK: Public Type Erasure
+
 public protocol AnyAction: class {
     var maxRetryCount: Int { get }
 }
@@ -18,11 +20,11 @@ extension AnyAction {
     }
 }
 
-// MARK: Type Erasure to make these methods available in this library scope only.
+// MARK: Internal Type Erasure.
 
 protocol AnyExecutableAction: AnyAction {
     func excutor() -> Observable<Void>
-    var storeReady: Observable<Void> { get }
+    func getStore() -> AnyStore?
 }
 
 open class Action<State>: AnyExecutableAction {
@@ -32,19 +34,9 @@ open class Action<State>: AnyExecutableAction {
         return nil
     }
     
-    final public func dispatchAsObservable() -> Observable<ActionEvent> {
-        willDispatch()
-        return store?.dispatchAsObservable(action: self) ?? Observable.empty()
-    }
-    
-    final public func dispatch() {
-        willDispatch()
-        store?.dispatch(action: self)
-    }
-    
     func excutor() -> Observable<Void> {
-        return Observable.empty()
-            .do(onCompleted: {
+        return Observable.just()
+            .do(onNext: {
                 guard let store = self.store, let newState = self.reduce(state: store.getState()) else { return }
                 store.applyChanges(newState)
             })
@@ -52,11 +44,33 @@ open class Action<State>: AnyExecutableAction {
     
     func willDispatch() { }
     
+    func didDispatch() { }
+    
+    func getStore() -> AnyStore? {
+        return store
+    }
+    
     open var store: Store<State>? {
         fatalError("\(type(of: self)) - The sub-class have to override the 'store' property.")
     }
+}
+
+// MARK: Dispatch Methods
+
+extension Action {
+    final public func dispatchAsObservable() -> Observable<ActionEvent> {
+        return store?.dispatchAsObservable(action: self)
+            .do(onSubscribe: {
+                self.willDispatch()
+            }, onSubscribed: {
+                self.didDispatch()
+            }) ?? Observable.empty()
+    }
     
-    var storeReady: Observable<Void> {
-        return store?.ready ?? Observable.empty()
+    final public func dispatch() {
+        willDispatch()
+        store?.dispatch(action: self)
+        didDispatch()
     }
 }
+

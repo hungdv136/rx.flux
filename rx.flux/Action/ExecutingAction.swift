@@ -28,9 +28,11 @@ public final class ExecutingAction: Hashable {
     // MARK: Internal methods
     
     func executor() -> Observable<Void> {
-        return cancelled ? Observable.empty() : action.excutor()
-            .take(1)
+        guard !cancelled else { return Observable.empty() }
+        
+        return action.excutor()
             .takeUntil(cancelSubject)
+            .take(1)
             .do(onNext: {
                 self.eventSubject.onNext(.completed)
             }, onError: {
@@ -51,28 +53,32 @@ public final class ExecutingAction: Hashable {
             })
     }
     
-    func remove(previousId: String) {
-        previousIds.remove(id)
-    }
-    
     // MARK: Public methods
     
     public func after(executingAction: ExecutingAction) {
+        locker.lock(); defer { locker.unlock() }
         previousIds.insert(executingAction.id)
         executingAction.hasNextId = true
     }
     
     public func cancel() {
+        locker.lock(); defer { locker.unlock() }
         guard !cancelled, !cancelSubject.isDisposed else { return }
         
         cancelled = true
         cancelSubject.onNext(true)
         cancelSubject.onCompleted()
     }
+    
+    func remove(previousId: String) {
+        locker.lock(); defer { locker.unlock() }
+        previousIds.remove(id)
+    }
 
     // MARK: Properties
     
     public private(set) lazy var id: String = NSUUID().uuidString
+    
     public var hashValue: Int {
         return id.hashValue
     }
@@ -93,7 +99,8 @@ public final class ExecutingAction: Hashable {
     }
     
     // MARK: Private
-
+    
+    private let locker = NSLock()
     private lazy var errorCount: Int = 0
     private lazy var cancelSubject = PublishSubject<Bool>()
     private lazy var eventSubject = PublishSubject<ActionEvent>()
