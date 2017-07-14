@@ -24,30 +24,34 @@ extension AnyAction {
 
 protocol AnyExecutableAction: AnyAction {
     func excutor() -> Observable<Void>
-    func getStore() -> AnyStore?
+    var store: AnyStore? { get }
 }
 
-open class Action<State>: AnyExecutableAction {
+protocol ActionDispatchLifecycle {
+    func willDispatch()
+    func didDispatch()
+}
+
+extension ActionDispatchLifecycle {
+    func willDispatch() { }
+    func didDispatch() { }
+}
+
+open class Action<State>: AnyExecutableAction, ActionDispatchLifecycle {
     public init() { }
     
     open func reduce(state: State) -> State? {
         return nil
     }
     
-    func excutor() -> Observable<Void> {
-        return Observable.just()
-            .do(onNext: {
-                guard let store = self.store, let newState = self.reduce(state: store.getState()) else { return }
-                store.applyChanges(newState)
-            })
+    func reduce() {
+        guard let store = self.store, let newState = self.reduce(state: store.getState()) else { return }
+        store.applyChanges(newState)
     }
     
-    func willDispatch() { }
-    
-    func didDispatch() { }
-    
-    func getStore() -> AnyStore? {
-        return store
+    func excutor() -> Observable<Void> {
+        return Observable.just()
+            .do(onNext: reduce)
     }
     
     open var store: Store<State>? {
@@ -55,10 +59,18 @@ open class Action<State>: AnyExecutableAction {
     }
 }
 
+// MARK: AnyExecutableAction
+
+extension Action {
+    var store: AnyStore? {
+        return store
+    }
+}
+
 // MARK: Dispatch Methods
 
 extension Action {
-    final public func dispatchAsObservable() -> Observable<ActionEvent> {
+    public func dispatchAsObservable() -> Observable<ActionEvent> {
         return store?.dispatchAsObservable(action: self)
             .do(onSubscribe: {
                 self.willDispatch()
@@ -67,7 +79,7 @@ extension Action {
             }) ?? Observable.empty()
     }
     
-    final public func dispatch() {
+    public func dispatch() {
         willDispatch()
         store?.dispatch(action: self)
         didDispatch()

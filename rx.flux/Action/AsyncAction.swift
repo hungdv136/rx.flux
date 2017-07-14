@@ -29,10 +29,12 @@ open class AsyncAction<State, Result>: Action<State> {
                 store.applyChanges(newState)
             }).map { _ in }
     }
-    
-    override func willDispatch() {
-        if let store = store, let newState = reduce(state: store.getState()) {
-            store.applyChanges(newState)
-        }
+}
+
+// MARK: ActionDispatchLifecycle
+
+extension AsyncAction {
+    func willDispatch() {
+        reduce()
     }
 }
