@@ -40,14 +40,14 @@ extension Dispatcher {
     
     private func dispatch(_ executableAction: ExecutingAction) {
         queue.async {
-            executableAction.action.getStore()?.rules.forEach { $0.execute(dispatchingAction: executableAction, actions: self.waitingItems) }
+            executableAction.action.store?.rules.forEach { $0.execute(dispatchingAction: executableAction, actions: self.waitingItems) }
             self.waitingItems.append(executableAction)
             self.registerExecuting(executableAction)
         }
     }
     
     private func registerExecuting(_ executableAction: ExecutingAction) {
-        executableAction.action.getStore()?.ready.subscribe(onNext: { [weak self] in
+        executableAction.action.store?.ready.subscribe(onNext: { [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.queue.async(execute: strongSelf.execute)
         }).disposed(by: disposeBag)
