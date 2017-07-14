@@ -15,7 +15,7 @@ public final class Dispatcher {
         queue = DispatchQueue(label: "flux-queue.dispatcher.\(name)", qos: .userInitiated)
     }
     
-    fileprivate let name = UUID().uuidString
+    public let name = UUID().uuidString
     fileprivate let disposeBag = DisposeBag()
     fileprivate var isExecuting = false
     fileprivate var waitingItems: [ExecutingAction] = []
