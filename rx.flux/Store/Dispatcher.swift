@@ -47,10 +47,11 @@ extension Dispatcher {
     }
     
     private func registerExecuting(_ executableAction: ExecutingAction) {
-        executableAction.action.store?.ready.subscribe(onNext: { [weak self] in
-            guard let strongSelf = self else { return }
-            strongSelf.queue.async(execute: strongSelf.execute)
-        }).disposed(by: disposeBag)
+        executableAction.ready
+            .subscribe(onNext: { [weak self] in
+                guard let strongSelf = self else { return }
+                strongSelf.queue.async(execute: strongSelf.execute)
+            }).disposed(by: disposeBag)
     }
 }
 
@@ -104,6 +105,6 @@ extension Dispatcher {
     }
     
     private func getReadyActions() -> [ExecutingAction] {
-        return waitingItems.filter { $0.previousIds.isEmpty && !self.executingItems.contains($0) }
+        return waitingItems.filter { $0.isReady && $0.previousIds.isEmpty && !self.executingItems.contains($0) }
     }
 }

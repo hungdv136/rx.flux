@@ -88,10 +88,16 @@ public final class ExecutingAction: Hashable {
     let action: AnyExecutableAction
     private(set) var cancelled: Bool = false
     private(set) var hasNextId: Bool = false
+    private(set) var isReady: Bool = false
     private(set) lazy var previousIds: Set<String> = Set<String>()
     
     var event: Observable<ActionEvent> {
         return eventSubject.takeUntil(cancelSubject)
+    }
+    
+    var ready: Observable<Void> {
+        guard let store = action.store else { return Observable.empty()}
+        return store.ready.do(onNext: { self.isReady = true })
     }
     
     var shouldRetry: Bool {
